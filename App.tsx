@@ -10,11 +10,12 @@ import { CircleButton } from "./component/CircleButton";
 import imagePlaceHolder from "./assets/images/placeholder.png";
 import { EmojiPicker } from "./component/EmojiPicker";
 import { EmojiList } from "./component/EmojiList";
+import { EmojiSticker } from "./component/EmojiSticker";
 
 export default function App({ label }) {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const { pickImageAsync, selectedImage } = UseImagePicker(setShowAppOptions);
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [pickedEmoji, setPickedEmoji] = useState(null);
 
   const PickImage = async () => {
@@ -33,6 +34,8 @@ export default function App({ label }) {
     setIsModalVisible(false);
   };
 
+  const onSaveImageAsync = () => {};
+
   return (
     <View
       style={{
@@ -47,6 +50,9 @@ export default function App({ label }) {
         placeholderImageSource={imagePlaceHolder}
         selectedImage={selectedImage}
       />
+      {pickedEmoji && (
+        <EmojiSticker imageSize={40} stickerSource={pickedEmoji} />
+      )}
 
       {!showAppOptions ? (
         <ButtonSelectImage label={"pick Image"} onPress={PickImage} />
