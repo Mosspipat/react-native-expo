@@ -2,7 +2,9 @@
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
 
-export const UseImagePicker = () => {
+export const UseImagePicker = (
+  setShowAppOptions: React.Dispatch<React.SetStateAction<boolean>>
+) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -12,12 +14,11 @@ export const UseImagePicker = () => {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      setShowAppOptions(true);
     } else {
-      alert("You did not select any image.");
+      console.log("You did not select any image.");
     }
   };
 
   return { pickImageAsync, selectedImage };
-
-  // ...rest of the code remains same
 };
