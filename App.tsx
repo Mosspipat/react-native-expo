@@ -1,11 +1,32 @@
-import { StyleSheet, View, Pressable, Text } from "react-native";
-import MyButtonNative from "./components/MyButtonNative/MyButtonNative";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import MyButtonNative from "./component/MyButtonNative/MyButtonNative";
+import { UseImagePicker } from "./hook/UseImagePicker/UseImagePicker";
+import { useState } from "react";
+import ButtonSelectImage from "./component/ButtonSelectImage/ButtonSelectImage";
+import { ImageViewer } from "./component/ImageViewer";
+import imagePlaceHolder from "./assets/images/placeholder.png";
 
 export default function App({ label }) {
+  const { pickImageAsync, selectedImage } = UseImagePicker();
+
+  const PickImage = async () => {
+    const result = await pickImageAsync();
+  };
   return (
-    <>
-      <MyButtonNative label="first Button" />
-    </>
+    <View
+      style={{
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      <ImageViewer
+        placeholderImageSource={imagePlaceHolder}
+        selectedImage={selectedImage}
+      />
+      <ButtonSelectImage label={"pick Image"} onPress={PickImage} />
+    </View>
   );
 }
 

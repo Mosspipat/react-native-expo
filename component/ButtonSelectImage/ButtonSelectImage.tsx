@@ -1,15 +1,10 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View, StyleSheet } from "react-native";
 
-export default function MyButtonNative({ label }) {
+export default function ButtonSelectImage({ label, onPress }) {
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable
-        style={styles.button}
-        onPress={() => alert("You pressed a button.")}
-      >
-        <Text style={styles.buttonLabel}>{label}</Text>
-      </Pressable>
-    </View>
+    <Pressable style={styles.buttonContainer} onPress={onPress}>
+      <Text style={{ color: "white" }}>{label}</Text>
+    </Pressable>
   );
 }
 
@@ -21,7 +16,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 3,
-    backgroundColor: "red",
+    backgroundColor: "blue",
   },
   button: {
     borderRadius: 10,
