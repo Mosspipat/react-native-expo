@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StatusBar, StyleSheet, Text, View } from "react-native";
 import MyButtonNative from "./component/MyButtonNative/MyButtonNative";
 import { UseImagePicker } from "./hook/UseImagePicker/UseImagePicker";
 import { useState } from "react";
@@ -8,10 +8,14 @@ import { IconButton } from "./component/IconButton";
 import { CircleButton } from "./component/CircleButton";
 
 import imagePlaceHolder from "./assets/images/placeholder.png";
+import { EmojiPicker } from "./component/EmojiPicker";
+import { EmojiList } from "./component/EmojiList";
 
 export default function App({ label }) {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const { pickImageAsync, selectedImage } = UseImagePicker(setShowAppOptions);
+  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [pickedEmoji, setPickedEmoji] = useState(null);
 
   const PickImage = async () => {
     const result = await pickImageAsync();
@@ -22,11 +26,11 @@ export default function App({ label }) {
   };
 
   const onAddSticker = () => {
-    // we will implement this later
+    setIsModalVisible(true);
   };
 
-  const onSaveImageAsync = async () => {
-    // we will implement this later
+  const onModalClose = () => {
+    setIsModalVisible(false);
   };
 
   return (
@@ -59,6 +63,10 @@ export default function App({ label }) {
           </View>
         </View>
       )}
+      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+      </EmojiPicker>
+      <StatusBar style="auto" />
     </View>
   );
 }
