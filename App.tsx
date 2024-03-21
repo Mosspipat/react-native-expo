@@ -1,17 +1,16 @@
-import { Button, StatusBar, StyleSheet, Text, View } from "react-native";
-import MyButtonNative from "./component/MyButtonNative/MyButtonNative";
-import { UseImagePicker } from "./hook/UseImagePicker/UseImagePicker";
 import { useState } from "react";
+import { Button, StatusBar, StyleSheet, Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { UseImagePicker } from "./hook/UseImagePicker/UseImagePicker";
 import ButtonSelectImage from "./component/ButtonSelectImage/ButtonSelectImage";
 import { ImageViewer } from "./component/ImageViewer";
 import { IconButton } from "./component/IconButton";
 import { CircleButton } from "./component/CircleButton";
-
-import imagePlaceHolder from "./assets/images/placeholder.png";
 import { EmojiPicker } from "./component/EmojiPicker";
 import { EmojiList } from "./component/EmojiList";
 import { EmojiSticker } from "./component/EmojiSticker";
 
+import imagePlaceHolder from "./assets/images/placeholder.png";
 export default function App({ label }) {
   const [showAppOptions, setShowAppOptions] = useState(false);
   const { pickImageAsync, selectedImage } = UseImagePicker(setShowAppOptions);
@@ -37,7 +36,7 @@ export default function App({ label }) {
   const onSaveImageAsync = () => {};
 
   return (
-    <View
+    <GestureHandlerRootView
       style={{
         height: "100%",
         justifyContent: "center",
@@ -73,7 +72,7 @@ export default function App({ label }) {
         <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
       </EmojiPicker>
       <StatusBar style="auto" />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
