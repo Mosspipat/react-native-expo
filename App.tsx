@@ -1,17 +1,29 @@
-import { Button, StyleSheet, Text, View } from "react-native";
-import MyButtonNative from "./component/MyButtonNative/MyButtonNative";
+import { useEffect, useRef, useState } from "react";
+import { StatusBar, StyleSheet, View } from "react-native";
+import * as MediaLibrary from "expo-media-library";
+import { captureRef } from "react-native-view-shot";
+
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { UseImagePicker } from "./hook/UseImagePicker/UseImagePicker";
-import { useState } from "react";
 import ButtonSelectImage from "./component/ButtonSelectImage/ButtonSelectImage";
 import { ImageViewer } from "./component/ImageViewer";
 import { IconButton } from "./component/IconButton";
 import { CircleButton } from "./component/CircleButton";
+import { EmojiPicker } from "./component/EmojiPicker";
+import { EmojiList } from "./component/EmojiList";
+import { EmojiSticker } from "./component/EmojiSticker";
 
 import imagePlaceHolder from "./assets/images/placeholder.png";
 
 export default function App({ label }) {
+  const imageRef = useRef();
+
   const [showAppOptions, setShowAppOptions] = useState(false);
   const { pickImageAsync, selectedImage } = UseImagePicker(setShowAppOptions);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pickedEmoji, setPickedEmoji] = useState(null);
+
+  const [status, requestPermission] = MediaLibrary.usePermissions();
 
   const PickImage = async () => {
     const result = await pickImageAsync();
@@ -22,15 +34,48 @@ export default function App({ label }) {
   };
 
   const onAddSticker = () => {
-    // we will implement this later
+    setIsModalVisible(true);
+  };
+
+  const onModalClose = () => {
+    setIsModalVisible(false);
   };
 
   const onSaveImageAsync = async () => {
-    // we will implement this later
+    try {
+      let localUri = null;
+
+      // Check if the selectedImage exists and has dimensions
+      if (selectedImage && selectedImage.width && selectedImage.height) {
+        // Capture the reference with the original image's dimensions
+        localUri = await captureRef(imageRef, {
+          width: selectedImage.width,
+          height: selectedImage.height,
+          quality: 1,
+        });
+      } else {
+        // If the dimensions are not available, capture with default dimensions
+        localUri = await captureRef(imageRef, {
+          height: 440,
+          quality: 1,
+        });
+      }
+
+      await MediaLibrary.saveToLibraryAsync(localUri);
+      if (localUri) {
+        alert("Saved!");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
+  if (status === null) {
+    requestPermission();
+  }
+
   return (
-    <View
+    <GestureHandlerRootView
       style={{
         height: "100%",
         justifyContent: "center",
@@ -39,10 +84,15 @@ export default function App({ label }) {
         backgroundColor: "black",
       }}
     >
-      <ImageViewer
-        placeholderImageSource={imagePlaceHolder}
-        selectedImage={selectedImage}
-      />
+      <View ref={imageRef} collapsable={false} style={styles.container}>
+        <ImageViewer
+          placeholderImageSource={imagePlaceHolder}
+          selectedImage={selectedImage}
+        />
+        {pickedEmoji && (
+          <EmojiSticker imageSize={100} stickerSource={pickedEmoji} />
+        )}
+      </View>
 
       {!showAppOptions ? (
         <ButtonSelectImage label={"pick Image"} onPress={PickImage} />
@@ -59,11 +109,21 @@ export default function App({ label }) {
           </View>
         </View>
       )}
-    </View>
+      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+      </EmojiPicker>
+      <StatusBar style="auto" />
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    // borderWidth: 1,
+    // borderColor: "red",
+    width: "100%",
+    height: "60%", // This will be overridden dynamically
+  },
   buttonContainer: {
     width: 320,
     height: 68,
